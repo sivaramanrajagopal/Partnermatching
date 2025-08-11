@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Vedic Life Partner Prediction</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Language Switcher -->
+        <div class="language-switcher">
+            <div class="lang-buttons">
+                <a href="/" class="lang-btn {% if lang == 'en' %}active{% endif %}">
+                    <i class="fas fa-globe"></i> English
+                </a>
+                <a href="/tamil" class="lang-btn {% if lang == 'ta' %}active{% endif %}">
+                    <i class="fas fa-globe"></i> தமிழ்
+                </a>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-star-and-crescent"></i> {{ get_text('title', lang) }}</h1>
+                <p>{{ get_text('subtitle', lang) }}</p>
+            </div>
+        </header>
+
+        <!-- Main Form -->
+        <main class="main-content">
+            <div class="form-container">
+                <form id="predictionForm" class="prediction-form">
+                    <div class="form-section">
+                        <h2><i class="fas fa-mars"></i> {{ get_text('male_partner_details', lang) }}</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="male_dob">{{ get_text('date_of_birth', lang) }}</label>
+                                <input type="date" id="male_dob" name="male_dob" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="male_tob">{{ get_text('time_of_birth', lang) }}</label>
+                                <input type="time" id="male_tob" name="male_tob" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="male_lat">{{ get_text('birth_latitude', lang) }}</label>
+                                <input type="number" id="male_lat" name="male_lat" step="0.000001" placeholder="e.g., 13.0833" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="male_lon">{{ get_text('birth_longitude', lang) }}</label>
+                                <input type="number" id="male_lon" name="male_lon" step="0.000001" placeholder="e.g., 80.2833" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2><i class="fas fa-venus"></i> {{ get_text('female_partner_details', lang) }}</h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="female_dob">{{ get_text('date_of_birth', lang) }}</label>
+                                <input type="date" id="female_dob" name="female_dob" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="female_tob">{{ get_text('time_of_birth', lang) }}</label>
+                                <input type="time" id="female_tob" name="female_tob" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="female_lat">{{ get_text('birth_latitude', lang) }}</label>
+                                <input type="number" id="female_lat" name="female_lat" step="0.000001" placeholder="e.g., 11.9416" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="female_lon">{{ get_text('birth_longitude', lang) }}</label>
+                                <input type="number" id="female_lon" name="female_lon" step="0.000001" placeholder="e.g., 79.8083" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-analyze">
+                            <i class="fas fa-crystal-ball"></i> {{ get_text('analyze_compatibility', lang) }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>{{ get_text('analyzing', lang) }}</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="results-container hidden">
+                <div class="results-header">
+                    <h2><i class="fas fa-chart-line"></i> {{ get_text('compatibility_results', lang) }}</h2>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ get_text('male_rahu_nakshatra', lang) }}</h3>
+                            <p id="male-rahu-nakshatra">-</p>
+                            <small id="rahu-lord">{{ get_text('lord', lang) }}: -</small>
+                            <small id="rahu-details">{{ get_text('position', lang) }}: -</small>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ get_text('male_ketu_nakshatra', lang) }}</h3>
+                            <p id="male-ketu-nakshatra">-</p>
+                            <small id="ketu-lord">{{ get_text('lord', lang) }}: -</small>
+                            <small id="ketu-details">{{ get_text('position', lang) }}: -</small>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>{{ get_text('total_matches', lang) }}</h3>
+                            <p id="total-matches">-</p>
+                            <small id="match-type">{{ get_text('type', lang) }}: -</small>
+                            <small id="match-breakdown">{{ get_text('rahu', lang) }}: -, {{ get_text('ketu', lang) }}: -</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compatibility Verdict -->
+                <div class="verdict-section">
+                    <div id="verdict-card" class="verdict-card">
+                        <div class="verdict-icon">
+                            <i id="verdict-icon" class="fas fa-question"></i>
+                        </div>
+                        <div class="verdict-content">
+                            <h3 id="verdict-title">{{ get_text('compatibility_verdict', lang) }}</h3>
+                            <p id="verdict-message">{{ get_text('enter_details', lang) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis Table -->
+                <div class="analysis-section">
+                    <h3><i class="fas fa-table"></i> {{ get_text('detailed_analysis', lang) }}</h3>
+                    <div class="table-container">
+                        <table class="compatibility-table">
+                            <thead>
+                                <tr>
+                                    <th>{{ get_text('condition', lang) }}</th>
+                                    <th>{{ get_text('female_chart_details', lang) }}</th>
+                                    <th>{{ get_text('match_type', lang) }}</th>
+                                    <th>{{ get_text('status', lang) }}</th>
+                                    <th>{{ get_text('reasoning', lang) }}</th>
+                                </tr>
+                            </thead>
+                            <tbody id="compatibility-table-body">
+                                <!-- Table rows will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Detailed Reasoning Section -->
+                <div class="reasoning-section">
+                    <div id="rahu-reasoning-box" class="reasoning-box hidden">
+                        <h4><i class="fas fa-star"></i> {{ get_text('primary_matches', lang) }}</h4>
+                        <div id="rahu-reasoning-content"></div>
+                    </div>
+                    
+                    <div id="ketu-reasoning-box" class="reasoning-box hidden">
+                        <h4><i class="fas fa-moon"></i> {{ get_text('secondary_matches', lang) }}</h4>
+                        <div id="ketu-reasoning-content"></div>
+                    </div>
+                    
+                    <div id="no-matches-box" class="reasoning-box hidden">
+                        <h4><i class="fas fa-exclamation-triangle"></i> {{ get_text('no_matches_found', lang) }}</h4>
+                        <p>{{ get_text('no_matches_message', lang) }}</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-redo"></i> {{ get_text('new_analysis', lang) }}
+                    </button>
+                    <button class="btn-primary" onclick="printResults()">
+                        <i class="fas fa-print"></i> {{ get_text('print_results', lang) }}
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>{{ get_text('footer_text', lang) }}</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps Autocomplete Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .location-hint {
+            color: #666;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+    <!-- Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCYM1jG3VT8D4gTtwkxNK1RaOzEgdmLbs4&libraries=places&callback=initGoogleMapsAPI"></script>
+</head>
+<body>
+    <h1>🔍 Google Maps Autocomplete Test</h1>
+    
+    <div id="status" class="status">
+        <strong>Status:</strong> Loading Google Maps API...
+    </div>
+    
+    <div class="form-group">
+        <label for="male_location">Male Birth Place:</label>
+        <input type="text" id="male_location" name="male_location" placeholder="Search for city..." autocomplete="off">
+        <small class="location-hint">Search for city, latitude and longitude will be auto-filled</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="male_lat">Latitude:</label>
+        <input type="number" id="male_lat" name="male_lat" step="0.000001" placeholder="Auto-filled" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="male_lon">Longitude:</label>
+        <input type="number" id="male_lon" name="male_lon" step="0.000001" placeholder="Auto-filled" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="female_location">Female Birth Place:</label>
+        <input type="text" id="female_location" name="female_location" placeholder="Search for city..." autocomplete="off">
+        <small class="location-hint">Search for city, latitude and longitude will be auto-filled</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="female_lat">Latitude:</label>
+        <input type="number" id="female_lat" name="female_lat" step="0.000001" placeholder="Auto-filled" readonly>
+    </div>
+    
+    <div class="form-group">
+        <label for="female_lon">Longitude:</label>
+        <input type="number" id="female_lon" name="female_lon" step="0.000001" placeholder="Auto-filled" readonly>
+    </div>
+    
+    <div class="form-group">
+        <h3>Test Instructions:</h3>
+        <ol>
+            <li>Type "Chennai" in the Male Birth Place field</li>
+            <li>Select "Chennai, Tamil Nadu, India" from the dropdown</li>
+            <li>Check if latitude and longitude are auto-filled</li>
+            <li>Try "Mumbai" in the Female Birth Place field</li>
+            <li>Verify coordinates are filled correctly</li>
+        </ol>
+    </div>
+
+    <script>
+        let autocompleteMale, autocompleteFemale;
+        
+        // Make initGoogleMapsAPI globally available for callback
+        window.initGoogleMapsAPI = function() {
+            console.log('Google Maps API loaded successfully');
+            
+            // Update status
+            document.getElementById('status').innerHTML = '<strong>Status:</strong> Google Maps API loaded successfully! ✅';
+            document.getElementById('status').className = 'status success';
+            
+            // Create autocomplete for male location
+            const maleLocationInput = document.getElementById('male_location');
+            if (maleLocationInput) {
+                autocompleteMale = new google.maps.places.Autocomplete(maleLocationInput, {
+                    types: ['(cities)'],
+                    componentRestrictions: { country: 'in' }
+                });
+                
+                autocompleteMale.addListener('place_changed', function() {
+                    fillInAddress('male');
+                });
+            }
+            
+            // Create autocomplete for female location
+            const femaleLocationInput = document.getElementById('female_location');
+            if (femaleLocationInput) {
+                autocompleteFemale = new google.maps.places.Autocomplete(femaleLocationInput, {
+                    types: ['(cities)'],
+                    componentRestrictions: { country: 'in' }
+                });
+                
+                autocompleteFemale.addListener('place_changed', function() {
+                    fillInAddress('female');
+                });
+            }
+        };
+        
+        // Fill in address details when location is selected
+        function fillInAddress(gender) {
+            const autocomplete = gender === 'male' ? autocompleteMale : autocompleteFemale;
+            const place = autocomplete.getPlace();
+            
+            if (!place.geometry) {
+                console.log("No geometry found for selected place");
+                return;
+            }
+            
+            const lat = place.geometry.location.lat();
+            const lng = place.geometry.location.lng();
+            
+            // Fill in the coordinates
+            document.getElementById(`${gender}_lat`).value = lat.toFixed(6);
+            document.getElementById(`${gender}_lon`).value = lng.toFixed(6);
+            
+            console.log(`${gender} location: ${place.formatted_address}`);
+            console.log(`Coordinates: ${lat}, ${lng}`);
+            
+            // Update status
+            document.getElementById('status').innerHTML = `<strong>Status:</strong> ${gender} location set to ${place.formatted_address} (${lat.toFixed(4)}, ${lng.toFixed(4)}) ✅`;
+            document.getElementById('status').className = 'status success';
+        }
+        
+        // Fallback initialization
+        function initGoogleMapsAPIFallback() {
+            if (typeof google !== 'undefined' && google.maps) {
+                window.initGoogleMapsAPI();
+            } else {
+                console.log('Google Maps API not loaded, retrying in 1 second...');
+                setTimeout(initGoogleMapsAPIFallback, 1000);
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // If API is already loaded, initialize immediately
+            if (typeof google !== 'undefined' && google.maps) {
+                window.initGoogleMapsAPI();
+            } else {
+                initGoogleMapsAPIFallback();
+            }
+        });
+    </script>
+</body>
+</html>
