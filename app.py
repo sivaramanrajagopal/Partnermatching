@@ -328,6 +328,11 @@ class CompatibilityAnalyzer:
             matches.append(get_text('female_lagna_lord', lang))
             reasoning.append(f"{node_text} {lord} = {get_text('female_lagna_lord_match', lang)} {lagna_lord}")
         
+        # Check Female Lagna Nakshatra Lord match
+        if lord == female_chart['Ascendant'].nakshatra_lord:
+            matches.append(get_text('female_lagna_nakshatra_lord', lang))
+            reasoning.append(f"{node_text} {lord} = Female Lagna Nakshatra Lord {female_chart['Ascendant'].nakshatra_lord}")
+        
         if lord in planets_in_lagna:
             matches.append(get_text('planets_in_female_lagna', lang))
             reasoning.append(f"{node_text} {lord} {get_text('present_in_female_lagna', lang)}")
@@ -363,6 +368,12 @@ class CompatibilityAnalyzer:
                 'details': f"Lagna: {asc_info.longitude:.2f}° in {CompatibilityAnalyzer._translate_rasi(asc_info.rasi, lang)}",
                 'lord': ASTRO.RASI_LORDS[asc_info.rasi],
                 'nakshatra_lord': None
+            },
+            get_text('female_lagna_nakshatra_lord', lang): {
+                'value': asc_info.nakshatra_lord,
+                'details': f"Lagna Nakshatra: {CompatibilityAnalyzer._translate_nakshatra(asc_info.nakshatra, lang)} (Lord: {asc_info.nakshatra_lord})",
+                'lord': asc_info.nakshatra_lord,
+                'nakshatra_lord': asc_info.nakshatra_lord
             },
             get_text('female_lagna_pada', lang): {
                 'value': f"Pada {asc_info.pada}",
@@ -537,6 +548,7 @@ def _prepare_frontend_data(analysis_result: Dict[str, Any], lang: str) -> List[D
         'female_rasi_moon_sign': get_text('female_rasi_moon_sign', lang),
         'female_nakshatra': get_text('female_nakshatra', lang),
         'female_lagna_lord': get_text('female_lagna_lord', lang),
+        'female_lagna_nakshatra_lord': get_text('female_lagna_nakshatra_lord', lang),
         'female_lagna_pada': get_text('female_lagna_pada', lang),
         'planets_in_female_lagna': get_text('planets_in_female_lagna', lang),
         'planets_in_female_rasi': get_text('planets_in_female_rasi', lang)
