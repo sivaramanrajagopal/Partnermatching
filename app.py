@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify
 import swisseph as swe
 import datetime
 from collections import OrderedDict
-import pandas as pd
 import json
 from translations import get_text
 from config import Config
