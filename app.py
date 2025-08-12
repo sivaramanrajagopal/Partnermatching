@@ -324,14 +324,16 @@ class CompatibilityAnalyzer:
             matches.append(get_text('female_nakshatra', lang))
             reasoning.append(f"{node_text} {lord} = {get_text('female_moon_nakshatra_lord', lang)} {female_chart['Moon'].nakshatra_lord}")
         
+        # Check Female Lagna Point matches (both rasi lord and nakshatra lord)
+        lagna_matches = []
         if lord == lagna_lord:
-            matches.append(get_text('female_lagna_lord', lang))
-            reasoning.append(f"{node_text} {lord} = {get_text('female_lagna_lord_match', lang)} {lagna_lord}")
-        
-        # Check Female Lagna Nakshatra Lord match
+            lagna_matches.append(f"Rasi Lord {lagna_lord}")
         if lord == female_chart['Ascendant'].nakshatra_lord:
-            matches.append(get_text('female_lagna_nakshatra_lord', lang))
-            reasoning.append(f"{node_text} {lord} = Female Lagna Nakshatra Lord {female_chart['Ascendant'].nakshatra_lord}")
+            lagna_matches.append(f"Nakshatra Lord {female_chart['Ascendant'].nakshatra_lord}")
+        
+        if lagna_matches:
+            matches.append(get_text('female_lagna_point', lang))
+            reasoning.append(f"{node_text} {lord} = Female Lagna {' & '.join(lagna_matches)}")
         
         if lord in planets_in_lagna:
             matches.append(get_text('planets_in_female_lagna', lang))
@@ -363,23 +365,11 @@ class CompatibilityAnalyzer:
                 'lord': moon.nakshatra_lord,
                 'nakshatra_lord': moon.nakshatra_lord
             },
-            get_text('female_lagna_lord', lang): {
-                'value': ASTRO.RASI_LORDS[asc_info.rasi],
-                'details': f"Lagna: {asc_info.longitude:.2f}° in {CompatibilityAnalyzer._translate_rasi(asc_info.rasi, lang)}",
+            get_text('female_lagna_point', lang): {
+                'value': f"{asc_info.longitude:.2f}° {CompatibilityAnalyzer._translate_rasi(asc_info.rasi, lang)} | {CompatibilityAnalyzer._translate_nakshatra(asc_info.nakshatra, lang)} Pada {asc_info.pada}",
+                'details': f"Lagna: {asc_info.longitude:.2f}° in {CompatibilityAnalyzer._translate_rasi(asc_info.rasi, lang)} | Nakshatra: {CompatibilityAnalyzer._translate_nakshatra(asc_info.nakshatra, lang)} Pada {asc_info.pada} | Rasi Lord: {ASTRO.RASI_LORDS[asc_info.rasi]} | Nakshatra Lord: {asc_info.nakshatra_lord}",
                 'lord': ASTRO.RASI_LORDS[asc_info.rasi],
-                'nakshatra_lord': None
-            },
-            get_text('female_lagna_nakshatra_lord', lang): {
-                'value': asc_info.nakshatra_lord,
-                'details': f"Lagna Nakshatra: {CompatibilityAnalyzer._translate_nakshatra(asc_info.nakshatra, lang)} (Lord: {asc_info.nakshatra_lord})",
-                'lord': asc_info.nakshatra_lord,
                 'nakshatra_lord': asc_info.nakshatra_lord
-            },
-            get_text('female_lagna_pada', lang): {
-                'value': f"Pada {asc_info.pada}",
-                'details': f"Ascendant Pada {asc_info.pada} in {CompatibilityAnalyzer._translate_nakshatra(asc_info.nakshatra, lang)}",
-                'lord': None,
-                'nakshatra_lord': None
             },
             get_text('planets_in_female_lagna', lang): {
                 'value': planets_in_lagna,
@@ -547,9 +537,7 @@ def _prepare_frontend_data(analysis_result: Dict[str, Any], lang: str) -> List[D
     condition_mapping = {
         'female_rasi_moon_sign': get_text('female_rasi_moon_sign', lang),
         'female_nakshatra': get_text('female_nakshatra', lang),
-        'female_lagna_lord': get_text('female_lagna_lord', lang),
-        'female_lagna_nakshatra_lord': get_text('female_lagna_nakshatra_lord', lang),
-        'female_lagna_pada': get_text('female_lagna_pada', lang),
+        'female_lagna_point': get_text('female_lagna_point', lang),
         'planets_in_female_lagna': get_text('planets_in_female_lagna', lang),
         'planets_in_female_rasi': get_text('planets_in_female_rasi', lang)
     }
