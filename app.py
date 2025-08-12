@@ -3,11 +3,19 @@ import swisseph as swe
 import datetime
 from collections import OrderedDict
 import json
+import os
 from translations import get_text
-from config import Config
 
 app = Flask(__name__)
-app.config.from_object(Config)
+
+# Try to import config, fallback to environment variables
+try:
+    from config import Config
+    app.config.from_object(Config)
+except ImportError:
+    # Fallback configuration using environment variables
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+    app.config['DEBUG'] = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # Your existing data structures
 nakshatras = [
