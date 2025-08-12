@@ -419,5 +419,13 @@ def analyze():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/health')
+def health_check():
+    """Health check endpoint for deployment"""
+    return {'status': 'healthy', 'static_files': {
+        'css_exists': os.path.exists('static/css/style.css'),
+        'js_exists': os.path.exists('static/js/script.js')
+    }}
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
