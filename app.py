@@ -314,16 +314,18 @@ def analyze():
         male_tob = data['male_tob']
         male_lat = float(data['male_lat'])
         male_lon = float(data['male_lon'])
+        male_tz_offset = float(data.get('male_tz_offset', 5.5))
         
         # Extract female data
         female_dob = data['female_dob']
         female_tob = data['female_tob']
         female_lat = float(data['female_lat'])
         female_lon = float(data['female_lon'])
+        female_tz_offset = float(data.get('female_tz_offset', 5.5))
         
         # Generate charts
-        male_chart, male_asc = create_birth_chart(male_dob, male_tob, male_lat, male_lon)
-        female_chart, female_asc = create_birth_chart(female_dob, female_tob, female_lat, female_lon)
+        male_chart, male_asc = create_birth_chart(male_dob, male_tob, male_lat, male_lon, male_tz_offset)
+        female_chart, female_asc = create_birth_chart(female_dob, female_tob, female_lat, female_lon, female_tz_offset)
         
         # Run compatibility analysis
         result = life_partner_prediction(male_chart, female_chart, male_asc, female_asc, lang)

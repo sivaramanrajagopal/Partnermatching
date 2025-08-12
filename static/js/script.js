@@ -16,10 +16,12 @@ predictionForm.addEventListener('submit', async function(e) {
         male_tob: document.getElementById('male_tob').value,
         male_lat: document.getElementById('male_lat').value,
         male_lon: document.getElementById('male_lon').value,
+        male_tz_offset: 5.5, // IST timezone offset
         female_dob: document.getElementById('female_dob').value,
         female_tob: document.getElementById('female_tob').value,
         female_lat: document.getElementById('female_lat').value,
-        female_lon: document.getElementById('female_lon').value
+        female_lon: document.getElementById('female_lon').value,
+        female_tz_offset: 5.5 // IST timezone offset
     };
     
     try {
